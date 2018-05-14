@@ -1,9 +1,11 @@
+import * as crypto from 'crypto'
 import * as fs from 'fs'
 import * as path from 'path'
 import {promisify} from 'util'
 
 import {Command, flags} from '@oclif/command'
 
+import configTemplate, {MoonglowConfig} from '../../templates/moonglow.config'
 import packageJsonTemplate, {PackageConfig} from '../../templates/package.json'
 
 const mkdirAsync = promisify(fs.mkdir)
@@ -38,7 +40,12 @@ export default class StartProject extends Command {
       license: 'MIT',
       author: 'Test Author'
     }
-
     await writeFileAsync(packageJsonFileLocation, packageJsonTemplate(packageConfig))
+
+    const configFileLocation = path.resolve(projectLocation, 'moonglow.config.ts')
+    const config: MoonglowConfig = {
+      secretKey: crypto.randomBytes(64).toString('hex')
+    }
+    await writeFileAsync(configFileLocation, configTemplate(config))
   }
 }
