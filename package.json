@@ -1,0 +1,63 @@
+{
+  "name": "moonglow",
+  "description": "Moonglow framework",
+  "version": "0.1.0",
+  "author": "Dang Mai <contact at dangmai dot net>",
+  "bin": {
+    "mg": "./bin/run"
+  },
+  "bugs": "https://github.com/dangmai/moonglow/issues",
+  "dependencies": {
+    "@oclif/command": "^1.4.28",
+    "@oclif/config": "^1.6.18",
+    "@oclif/plugin-help": "^1.2.10",
+    "tslib": "^1.9.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.13.20",
+    "@oclif/test": "^1.0.6",
+    "@oclif/tslint": "^1.1.1",
+    "@types/chai": "^4.1.0",
+    "@types/mocha": "^5.2.0",
+    "@types/node": "^10.0.4",
+    "@types/tmp": "0.0.33",
+    "chai": "^4.1.2",
+    "globby": "^8.0.1",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.3",
+    "tmp": "0.0.33",
+    "ts-node": "^6.0.3",
+    "tslint": "^5.6.0",
+    "typescript": "^2.8.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/dangmai/moonglow",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "ISC",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "mg",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "dangmai/moonglow-cli",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
+}
