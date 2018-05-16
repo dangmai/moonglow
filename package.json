@@ -58,7 +58,7 @@
     "oclif"
   ],
   "license": "ISC",
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "mg",
@@ -68,11 +68,12 @@
   },
   "repository": "dangmai/moonglow-cli",
   "scripts": {
+    "dev": "rm -rf lib && tsc --watch",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   },
-  "types": "lib/index.d.ts"
+  "types": "lib/src/index.d.ts"
 }
