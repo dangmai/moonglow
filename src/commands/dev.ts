@@ -1,5 +1,5 @@
 import {Command, flags} from '@oclif/command'
-import runDevServer from '../libs/server'
+import runDevServer from '../libs/dev-server'
 
 export default class Dev extends Command {
   static description = 'Running Moonglow Dev Server'
