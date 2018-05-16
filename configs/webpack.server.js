@@ -13,6 +13,11 @@ module.exports = {
     library: 'app',
     libraryTarget: 'commonjs2'
   },
+  resolve: {
+    alias: {
+      moonglow: path.resolve(__dirname, '..', 'lib', 'src', 'libs')
+    }
+  },
   resolveLoader: {
     modules: [
       path.resolve(__dirname, '..', 'node_modules'),

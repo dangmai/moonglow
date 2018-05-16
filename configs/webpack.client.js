@@ -10,6 +10,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/assets'
   },
+  resolve: {
+    alias: {
+      moonglow: path.resolve(__dirname, '..', 'lib', 'src', 'libs')
+    }
+  },
   resolveLoader: {
     modules: [
       path.resolve(__dirname, '..', 'node_modules'),
