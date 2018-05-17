@@ -2,8 +2,11 @@ import * as express from 'express'
 import MemoryFS = require('memory-fs')
 import * as path from 'path'
 import * as requireFromString from 'require-from-string'
+import createRouter from 'router5/create-router'
 import * as webpack from 'webpack'
 import * as webpackDevMiddleware from 'webpack-dev-middleware'
+
+import runReactServer from './react-server'
 
 export default () => {
   const fs = new MemoryFS()
@@ -19,9 +22,23 @@ export default () => {
     publicPath: serverConfig.output.publicPath
   })
   serverDevInstance.waitUntilValid(() => {
-    const contents = fs.readFileSync(path.resolve(serverConfig.output.path, serverConfig.output.filename), 'utf8')
-    const server = requireFromString(contents, serverConfig.output.filename)
-    app.get('/', server.default)
+    const contents = fs.readFileSync(path.resolve(serverConfig.output.path, 'server.js'), 'utf8')
+    const server = requireFromString(contents, 'server.js')
+
+    const routesContent = fs.readFileSync(path.resolve(serverConfig.output.path, 'routes.js'), 'utf8')
+    const routes = requireFromString(routesContent, 'routes.js')
+
+    // app.get('/', server.default)
+    app.get('*', (req, res, next) => {
+      const router = createRouter(routes.default)
+      router.start(req.originalUrl, (error, state) => {
+        if (error) {
+          next()
+        } else {
+          runReactServer(router, server.default, req, res)
+        }
+      })
+    })
     app.listen(3000)
     console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
   })

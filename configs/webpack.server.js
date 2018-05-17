@@ -1,15 +1,20 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 
+const currentDir = process.cwd();
+
 module.exports = {
   mode: 'production',
   target: 'node',
   externals: [nodeExternals()],
-  entry: path.resolve(process.cwd(), 'server.js'),
+  entry: {
+    server: path.resolve(currentDir, 'server.js'),
+    routes: path.resolve(currentDir, 'routes.js')
+  },
   output: {
     path: path.resolve(process.cwd(), 'dist'),
     publicPath: '/dist/',
-    filename: 'server.js',
+    filename: '[name].js',
     library: 'app',
     libraryTarget: 'commonjs2'
   },
