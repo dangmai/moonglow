@@ -14,7 +14,8 @@ export default (config: PackageConfig) => `
   "author": "${config.author}",
   "dependencies": {
     "moonglow": "^0.1.0",
-    "moonglow-cli": "^0.1.0"
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -23,6 +24,9 @@ export default (config: PackageConfig) => `
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-  },
+    "dev": "mg dev",
+    "build": "mg build",
+    "start": "mg start"
+  }
 }
 `
