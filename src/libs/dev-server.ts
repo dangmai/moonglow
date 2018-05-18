@@ -19,7 +19,8 @@ export default () => {
   // Tell express to use the webpack-dev-middleware and use the webpack.config.js
   // configuration file as a base.
   const serverDevInstance = webpackDevMiddleware(serverCompiler, {
-    publicPath: serverConfig.output.publicPath
+    publicPath: serverConfig.output.publicPath,
+    logLevel: 'warn'
   })
   serverDevInstance.waitUntilValid(() => {
     const contents = fs.readFileSync(path.resolve(serverConfig.output.path, 'server.js'), 'utf8')
@@ -48,7 +49,8 @@ export default () => {
   clientConfig.mode = 'development'
   const clientCompiler = webpack(clientConfig)
   const clientDevInstance = webpackDevMiddleware(clientCompiler, {
-    publicPath: clientConfig.output.publicPath
+    publicPath: clientConfig.output.publicPath,
+    logLevel: 'warn'
   })
   app.use(clientDevInstance)
 }
