@@ -20,33 +20,7 @@ function createExpressApp(fs: MemoryFS, serverConfig: any) {
 export default () => {
   const fs = new MemoryFS()
 
-  const devServer = express()
-  const serverConfig = require('../../configs/webpack.server.js')
-  serverConfig.mode = 'development'
-  const serverCompiler = webpack(serverConfig)
-  serverCompiler.outputFileSystem = fs
-
-  // Tell express to use the webpack-dev-middleware and use the webpack.config.js
-  // configuration file as a base.
-  const serverDevInstance = webpackDevMiddleware(serverCompiler, {
-    publicPath: serverConfig.output.publicPath,
-    logLevel: 'warn'
-  })
-  serverDevInstance.waitUntilValid(() => {
-    let expressApp = createExpressApp(fs, serverConfig)
-    const server = http.createServer(expressApp)
-    server.listen(3000)
-
-    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', _ => {
-      delete require.cache[path.resolve(__dirname, 'express-server.ts')]
-      server.removeListener('request', expressApp)
-      expressApp = createExpressApp(fs, serverConfig)
-      server.on('request', expressApp)
-    })
-
-    console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
-  })
-  devServer.use(serverDevInstance)
+  let devServer: express.Express
 
   const clientConfig = require('../../configs/webpack.client.js')
   clientConfig.mode = 'development'
@@ -55,5 +29,32 @@ export default () => {
     publicPath: clientConfig.output.publicPath,
     logLevel: 'warn'
   })
-  devServer.use(clientDevInstance)
+
+  const serverConfig = require('../../configs/webpack.server.js')
+  serverConfig.mode = 'development'
+  const serverCompiler = webpack(serverConfig)
+  serverCompiler.outputFileSystem = fs
+
+  const serverDevInstance = webpackDevMiddleware(serverCompiler, {
+    publicPath: serverConfig.output.publicPath,
+    logLevel: 'warn'
+  })
+  serverDevInstance.waitUntilValid(() => {
+    devServer = createExpressApp(fs, serverConfig)
+    devServer.use(clientDevInstance)
+    const server = http.createServer(devServer)
+    server.listen(3000)
+
+    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', _ => {
+      delete require.cache[path.resolve(__dirname, 'express-server.ts')]
+      delete require.cache[path.resolve(__dirname, 'react-server.tsx')]
+      server.removeListener('request', devServer)
+      devServer = createExpressApp(fs, serverConfig)
+      devServer.use(clientDevInstance)
+      server.on('request', devServer)
+    })
+
+    console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
+  })
+
 }
