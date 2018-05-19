@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './client.js',
+  entry: path.resolve(__dirname, '../lib/src/libs/client.js'),
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -12,6 +12,12 @@ module.exports = {
     modules: [
       path.resolve(__dirname, '..', 'node_modules'),
       'node_modules'
+    ]
+  },
+  resolve: {
+    modules: [
+      'node_modules',
+      process.cwd()
     ]
   },
   module: {
