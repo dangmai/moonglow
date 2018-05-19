@@ -10,6 +10,7 @@ import packageJsonTemplate, {PackageConfig} from '../../templates/package.json'
 
 const mkdirAsync = promisify(fs.mkdir)
 const writeFileAsync = promisify(fs.writeFile)
+const copyFileAsync = promisify(fs.copyFile)
 
 export default class StartProject extends Command {
   static description = 'Start a new Moonglow project'
@@ -30,7 +31,9 @@ export default class StartProject extends Command {
     this.log(`Creating project ${args.name}...`)
 
     const projectLocation = path.resolve(process.cwd(), args.name)
+    const pagesLocation = path.resolve(projectLocation, 'pages')
     await mkdirAsync(projectLocation)
+    await mkdirAsync(pagesLocation)
 
     const packageJsonFileLocation = path.resolve(projectLocation, 'package.json')
     const packageConfig: PackageConfig = {
@@ -42,10 +45,16 @@ export default class StartProject extends Command {
     }
     await writeFileAsync(packageJsonFileLocation, packageJsonTemplate(packageConfig))
 
-    const configFileLocation = path.resolve(projectLocation, 'moonglow.config.ts')
+    const configFileLocation = path.resolve(projectLocation, 'moonglow.config.js')
     const config: MoonglowConfig = {
       secretKey: crypto.randomBytes(64).toString('hex')
     }
     await writeFileAsync(configFileLocation, configTemplate(config))
+
+    const templatePageDir = path.resolve(__dirname, '../../templates/pages')
+    await copyFileAsync(path.resolve(templatePageDir, 'about.js'), path.resolve(pagesLocation, 'about.js'))
+    await copyFileAsync(path.resolve(templatePageDir, 'home.js'), path.resolve(pagesLocation, 'home.js'))
+    await copyFileAsync(path.resolve(templatePageDir, 'app.js'), path.resolve(pagesLocation, 'app.js'))
+    await copyFileAsync(path.resolve(templatePageDir, '../routes.js'), path.resolve(pagesLocation, '../routes.js'))
   }
 }
