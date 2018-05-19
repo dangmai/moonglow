@@ -8,13 +8,14 @@ import * as webpackDevMiddleware from 'webpack-dev-middleware'
 
 function createExpressApp(fs: MemoryFS, serverConfig: any) {
   const expressServer = require('./express-server').default
-  const contents = fs.readFileSync(path.resolve(serverConfig.output.path, 'server.js'), 'utf8')
-  const appComponent = requireFromString(contents, 'server.js')
+  const contents = fs.readFileSync(path.resolve(serverConfig.output.path, 'configs.js'), 'utf8')
+  const configs = requireFromString(contents, 'server.js').default
+  const appComponent = configs.entry
 
   const routesContent = fs.readFileSync(path.resolve(serverConfig.output.path, 'routes.js'), 'utf8')
   const routes = requireFromString(routesContent, 'routes.js')
 
-  return expressServer(routes.default, appComponent.default)
+  return expressServer(routes.default, appComponent)
 }
 
 export default () => {

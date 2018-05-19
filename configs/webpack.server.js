@@ -8,7 +8,7 @@ module.exports = {
   target: 'node',
   externals: [nodeExternals()],
   entry: {
-    server: path.resolve(currentDir, 'server.js'),
+    configs: path.resolve(currentDir, 'moonglow.config.js'),
     routes: path.resolve(currentDir, 'routes.js')
   },
   output: {
