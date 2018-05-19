@@ -2,9 +2,9 @@ import {Request, Response} from 'express'
 import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import {RouterProvider} from 'react-router5'
-import {Router} from 'router5/create-router'
+import {Router, State} from 'router5/create-router'
 
-const templateFn = (html: string) => `<!DOCTYPE html>
+const templateFn = (html: string, routerState: State) => `<!DOCTYPE html>
 <html>
 <head>
     <title>test app</title>
@@ -13,16 +13,19 @@ const templateFn = (html: string) => `<!DOCTYPE html>
 </head>
 <body>
     <div id="app">${html}</div>
-    <!--<script src="assets/main.bundle.js"></script>-->
+    <script type="text/javascript">
+      var initialState = ${JSON.stringify(routerState)};
+    </script>
+    <script src="assets/main.bundle.js"></script>
 </body>
 </html>
 `
 
-export default (router: Router, appComponent: React.ComponentClass, req: Request, res: Response) => {
+export default (router: Router, appComponent: React.ComponentClass, _: Request, res: Response) => {
   const app = React.createElement(RouterProvider, {router}, React.createElement(appComponent))
   const html = ReactDOMServer.renderToString(app)
 
-  const response = templateFn(html)
+  const response = templateFn(html, router.getState())
 
   res.send(response)
 }

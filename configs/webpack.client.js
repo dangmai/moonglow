@@ -1,6 +1,4 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -9,11 +7,6 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/assets'
-  },
-  resolve: {
-    alias: {
-      moonglow: path.resolve(__dirname, '..', 'lib', 'src', 'libs')
-    }
   },
   resolveLoader: {
     modules: [
@@ -34,7 +27,5 @@ module.exports = {
     ]
   },
   devtool: 'source-map',
-  plugins: [
-    // new CleanWebpackPlugin(['dist']),
-  ]
+  plugins: []
 };
