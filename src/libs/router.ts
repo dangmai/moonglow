@@ -10,12 +10,6 @@ import renderReact from './react-server'
 export {Link, routeNode, RouterProvider, withRoute} from 'react-router5'
 export {browserPlugin, createRouter, listenersPlugin}
 
-export function getRouter(routes: Route[]): Router {
-  return createRouter(routes)
-    .usePlugin(browserPlugin({useHash: false}))
-    .usePlugin(listenersPlugin())
-}
-
 export class MoonglowRouter {
   providers: MoonglowRouterProvider[]
 
