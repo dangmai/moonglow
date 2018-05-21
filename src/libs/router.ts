@@ -32,8 +32,23 @@ export type MoonglowRouterProvider = ServerRouterProvider |
   ClientRouterProvider |
   UniversalRouterProvider
 
+export enum HttpMethod {
+  ALL,
+  GET,
+  POST,
+  PUT,
+  DELETE
+}
+
+export type ExpressMiddlewareHandler = (req: Request, res: Response, next: NextFunction) => void
+export type ExpressMiddleware = {
+  httpMethod: HttpMethod,
+  path: string,
+  handler: ExpressMiddlewareHandler
+}
+
 export interface ServerRouterProvider {
-  getExpressMiddleware(): (req: Request, res: Response, next: NextFunction) => void
+  getExpressMiddlewares(): ExpressMiddleware[]
 }
 export type UniversalRouterProvider = ServerRouterProvider & ClientRouterProvider
 
@@ -43,6 +58,38 @@ export type WebpackEntry = {
 }
 export interface ClientRouterProvider {
   getClientEntry(): WebpackEntry
+}
+
+export class ExpressRoute {
+  path: string
+  httpMethod: HttpMethod
+  handler: ExpressMiddlewareHandler
+
+  constructor(httpMethod: HttpMethod, path: string, handler: ExpressMiddlewareHandler) {
+    this.path = path
+    this.httpMethod = httpMethod
+    this.handler = handler
+  }
+}
+
+export class ExpressRouterProvider implements ServerRouterProvider {
+  routes: ExpressRoute[]
+
+  constructor() {
+    this.routes = []
+  }
+
+  route(httpMethod: HttpMethod, path: string, handler: ExpressMiddlewareHandler) {
+    this.routes.push(new ExpressRoute(httpMethod, path, handler))
+  }
+
+  getExpressMiddlewares() {
+    return this.routes.map(route => ({
+      httpMethod: route.httpMethod,
+      path: route.path,
+      handler: route.handler
+    }))
+  }
 }
 
 export class ReactRouterProvider implements UniversalRouterProvider {
@@ -66,8 +113,8 @@ export class ReactRouterProvider implements UniversalRouterProvider {
       .usePlugin(listenersPlugin())
   }
 
-  getExpressMiddleware() {
-    return (req: Request, res: Response, next: NextFunction) => {
+  getExpressMiddlewares() {
+    let handler = (req: Request, res: Response, next: NextFunction) => {
       const reactRouter = this.getRouter()
       reactRouter.start(req.originalUrl, (error, _state) => {
         if (error) {
@@ -77,6 +124,11 @@ export class ReactRouterProvider implements UniversalRouterProvider {
         }
       })
     }
+    return [{
+      httpMethod: HttpMethod.ALL,
+      path: '*',
+      handler
+    }]
   }
 
   getClientEntry() {

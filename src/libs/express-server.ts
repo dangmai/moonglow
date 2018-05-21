@@ -1,11 +1,34 @@
 import * as express from 'express'
-import {MoonglowRouter, ServerRouterProvider} from './router'
+import {HttpMethod, MoonglowRouter, ServerRouterProvider} from './router'
 
 export default (router: MoonglowRouter): express.Express => {
   const app = express()
   router.providers.forEach(provider => {
-    if ((<ServerRouterProvider> provider).getExpressMiddleware) {  // tslint:disable-line:no-angle-bracket-type-assertion
-      app.use((<ServerRouterProvider> provider).getExpressMiddleware())  // tslint:disable-line:no-angle-bracket-type-assertion
+    if ((<ServerRouterProvider> provider).getExpressMiddlewares) {  // tslint:disable-line:no-angle-bracket-type-assertion
+      const middlewares = (<ServerRouterProvider> provider).getExpressMiddlewares()  // tslint:disable-line:no-angle-bracket-type-assertion
+      middlewares.forEach(middleware => {
+        switch (middleware.httpMethod) {
+          case HttpMethod.ALL: {
+            app.use(middleware.path, middleware.handler)
+            break
+          }
+          case HttpMethod.GET: {
+            app.get(middleware.path, middleware.handler)
+            break
+          }
+          case HttpMethod.POST: {
+            app.post(middleware.path, middleware.handler)
+            break
+          }
+          case HttpMethod.PUT: {
+            app.put(middleware.path, middleware.handler)
+            break
+          }
+          case HttpMethod.DELETE: {
+            app.delete(middleware.path, middleware.handler)
+          }
+        }
+      })
     }
   })
   return app
