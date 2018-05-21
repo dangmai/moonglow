@@ -1,10 +1,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import {getRouter, RouterProvider} from './router'
+import {MoonglowRouterProvider, ReactRouterProvider, RouterProvider} from './router'
 
-const routes = require('routes').default
-const configs = require('moonglow.config').default
+const moonglowRouter = require('routes').router
 
 declare global {
   interface Window {
@@ -12,15 +11,18 @@ declare global {
   }
 }
 
-const router = getRouter(routes)
+const reactProvider = moonglowRouter.providers
+  .filter((provider: MoonglowRouterProvider) => provider instanceof ReactRouterProvider)[0]
 
-router.start(window.initialState, (err, _) => {
+const router = reactProvider.getRouter()
+
+router.start(window.initialState, (err: any, _: any) => {
   if (err) {
     console.error(err)  // tslint:disable-line:no-console
   } else {
     ReactDOM.hydrate(
       <RouterProvider router={router}>
-        {configs.entry()}
+        {reactProvider.entryComponent()}
       </RouterProvider>,
       document.getElementById('app')
     )
