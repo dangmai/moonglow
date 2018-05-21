@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
@@ -32,5 +33,9 @@ module.exports = {
     ]
   },
   devtool: 'source-map',
-  plugins: []
+  plugins: [
+    new webpack.DefinePlugin({
+      MOONGLOW_SERVER_MODE: JSON.stringify(false)
+    })
+  ]
 };

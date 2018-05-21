@@ -1,12 +1,15 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
+const webpack = require('webpack');
 
 const currentDir = process.cwd();
 
 module.exports = {
   mode: 'production',
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [nodeExternals({
+    whitelist: ['moonglow/lib/src/libs/utils']
+  })],
   entry: {
     configs: path.resolve(currentDir, 'moonglow.config.js'),
     routes: path.resolve(currentDir, 'routes.js')
@@ -35,5 +38,10 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      MOONGLOW_SERVER_MODE: JSON.stringify(true)
+    })
+  ]
 };
