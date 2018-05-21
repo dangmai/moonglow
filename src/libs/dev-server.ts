@@ -66,11 +66,16 @@ export default () => {
       delete require.cache[path.resolve(__dirname, 'express-server.ts')]
       delete require.cache[path.resolve(__dirname, 'react-server.tsx')]
       server.removeListener('request', devServer)
-      devServer = createExpressApp(getRouter(fs, serverConfig))
-      if (clientDevInstance) {
-        devServer.use(clientDevInstance)
+      try {
+        devServer = createExpressApp(getRouter(fs, serverConfig))
+        if (clientDevInstance) {
+          devServer.use(clientDevInstance)
+        }
+      } catch (e) {
+        console.error(e)  // tslint:disable-line:no-console
+      } finally {
+        server.on('request', devServer)
       }
-      server.on('request', devServer)
     })
 
     console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
