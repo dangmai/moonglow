@@ -1,7 +1,7 @@
 import {MoonglowRouter, ReactRouterProvider} from 'moonglow/lib/src/libs/router';
 import App from './pages/app';
 
-const router = MoonglowRouter.getInstance();
+const router = new MoonglowRouter();
 const reactProvider = new ReactRouterProvider(App);
 router.use(reactProvider);
 

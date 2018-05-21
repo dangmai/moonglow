@@ -16,7 +16,7 @@ const templateFn = (html: string, routerState: State) => `<!DOCTYPE html>
     <script type="text/javascript">
       var initialState = ${JSON.stringify(routerState)};
     </script>
-    <script src="assets/main.bundle.js"></script>
+    <script src="assets/react-router5-client.bundle.js"></script>
 </body>
 </html>
 `

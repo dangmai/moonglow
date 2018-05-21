@@ -1,4 +1,5 @@
 import {NextFunction, Request, Response} from 'express'
+import * as path from 'path'
 import * as React from 'react'
 import createRouter, {Route, Router} from 'router5/create-router'
 import browserPlugin from 'router5/plugins/browser'
@@ -16,14 +17,9 @@ export function getRouter(routes: Route[]): Router {
 }
 
 export class MoonglowRouter {
-  public static getInstance(): MoonglowRouter {
-    return this._instance || (this._instance = new this())
-  }
-
-  private static _instance: MoonglowRouter
   providers: MoonglowRouterProvider[]
 
-  private constructor() {
+  constructor() {
     this.providers = []
   }
 
@@ -32,11 +28,24 @@ export class MoonglowRouter {
   }
 }
 
-export interface MoonglowRouterProvider {
+export type MoonglowRouterProvider = ServerRouterProvider |
+  ClientRouterProvider |
+  UniversalRouterProvider
+
+export interface ServerRouterProvider {
   getExpressMiddleware(): (req: Request, res: Response, next: NextFunction) => void
 }
+export type UniversalRouterProvider = ServerRouterProvider & ClientRouterProvider
 
-export class ReactRouterProvider implements MoonglowRouterProvider {
+export type WebpackEntry = {
+  name: string,
+  path: string
+}
+export interface ClientRouterProvider {
+  getClientEntry(): WebpackEntry
+}
+
+export class ReactRouterProvider implements UniversalRouterProvider {
   routes: Route[]
   entryComponent: React.ComponentClass
 
@@ -67,6 +76,13 @@ export class ReactRouterProvider implements MoonglowRouterProvider {
           renderReact(reactRouter, this.entryComponent, req, res)
         }
       })
+    }
+  }
+
+  getClientEntry() {
+    return {
+      name: 'react-router5-client',
+      path: path.resolve(__dirname, '../../../lib/src/libs/react-client.js')
     }
   }
 }
