@@ -4,6 +4,12 @@ const webpack = require('webpack');
 
 const currentDir = process.cwd();
 
+function localResolve(preset) {
+  return Array.isArray(preset) ?
+    [require.resolve(preset[0]), preset[1]] :
+    require.resolve(preset);
+}
+
 module.exports = {
   mode: 'production',
   target: 'node',
@@ -34,7 +40,15 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['babel-preset-env', 'babel-preset-stage-2', 'babel-preset-react'].map(require.resolve)
+          presets: [
+            ['babel-preset-env', {
+              targets: {
+                node: 'current'
+              }
+            }],
+            'babel-preset-stage-2',
+            'babel-preset-react'
+          ].map(localResolve)
         }
       }
     ]
