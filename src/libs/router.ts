@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express'
 import * as path from 'path'
 import * as React from 'react'
+import {InjectedRoute, Omit, withRoute} from 'react-router5'
 import createRouter, {Route, Router} from 'router5/create-router'
 import browserPlugin from 'router5/plugins/browser'
 import listenersPlugin from 'router5/plugins/listeners'
@@ -131,4 +132,41 @@ export class ReactRouterProvider implements UniversalRouterProvider {
       path: path.resolve(__dirname, '../../../lib/src/libs/react-client.js')
     }
   }
+}
+
+export interface RoutableComponent<TProps extends Partial<InjectedRoute>> extends React.ComponentClass<Omit<TProps, keyof InjectedRoute>> {
+  getInitialProps?(route: InjectedRoute): any
+}
+
+export interface MiddleRouteState {}
+
+export function middleRoute(route: Route, BaseComponent: RoutableComponent<MiddleRouteState>) {
+  return class extends React.Component<InjectedRoute> {
+    static getDerivedStateFromProps(nextProps: InjectedRoute, _: MiddleRouteState): MiddleRouteState {
+      if (BaseComponent.getInitialProps) {
+        const newState = BaseComponent.getInitialProps(nextProps)
+        return newState
+      }
+      return {}
+    }
+
+    constructor(props: any, context: any) {
+      super(props, context)
+
+      this.state = {}
+    }
+
+    render() {
+      if (this.props.route && route.name === this.props.route.name) {
+        const childProps = {...this.props, ...this.state}
+        return React.createElement(BaseComponent, childProps)
+      } else {
+        return null
+      }
+    }
+  }
+}
+
+export function simpleRoute(route: Route, BaseComponent: RoutableComponent<any>) {
+  return withRoute(middleRoute(route, BaseComponent))
 }
