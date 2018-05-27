@@ -15,6 +15,7 @@ module.exports = {
     ]
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
     modules: [
       'node_modules',
       process.cwd()
@@ -23,12 +24,17 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
           presets: ['babel-preset-env', 'babel-preset-stage-2', 'babel-preset-react'].map(require.resolve)
         }
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/
       }
     ]
   },

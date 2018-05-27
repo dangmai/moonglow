@@ -1,9 +1,7 @@
 import {NextHandleFunction} from 'connect'
 import * as express from 'express'
 import * as http from 'http'
-import MemoryFS = require('memory-fs')
 import * as path from 'path'
-import * as requireFromString from 'require-from-string'
 import * as webpack from 'webpack'
 import * as webpackDevMiddleware from 'webpack-dev-middleware'
 
@@ -14,28 +12,31 @@ function createExpressApp(router: MoonglowRouter) {
   return expressServer(router)
 }
 
-function getRouter(fs: MemoryFS, serverConfig: any): MoonglowRouter {
-  const routesContent = fs.readFileSync(path.resolve(serverConfig.output.path, 'routes.js'), 'utf8')
-  const routes = requireFromString(routesContent, 'routes.js')
-  return routes.router
+function getRouter(): MoonglowRouter {
+  const bootstrap = require(path.resolve(process.cwd(), './.moonglow/server/bootstrap'))
+  return bootstrap.getProjectRoutes()
+}
+
+declare module 'webpack-dev-middleware' {
+  interface Options {
+    writeToDisk?: boolean
+  }
 }
 
 export default () => {
-  const fs = new MemoryFS()
-
   const serverConfig = require('../../configs/webpack.server.js')
   serverConfig.mode = 'development'
   const serverCompiler = webpack(serverConfig)
-  serverCompiler.outputFileSystem = fs
 
   let devServer: express.Express
 
   const serverDevInstance = webpackDevMiddleware(serverCompiler, {
     publicPath: serverConfig.output.publicPath,
-    logLevel: 'warn'
+    logLevel: 'warn',
+    writeToDisk: true
   })
   serverDevInstance.waitUntilValid(() => {
-    const router = getRouter(fs, serverConfig)
+    const router = getRouter()
     devServer = createExpressApp(router)
 
     let clientDevInstance: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
@@ -63,11 +64,12 @@ export default () => {
     server.listen(3000)
 
     serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', _ => {
+      delete require.cache[path.resolve(process.cwd(), '.moonglow/server/bootstrap.js')]
       delete require.cache[path.resolve(__dirname, 'express-server.ts')]
       delete require.cache[path.resolve(__dirname, 'react-server.tsx')]
       server.removeListener('request', devServer)
       try {
-        devServer = createExpressApp(getRouter(fs, serverConfig))
+        devServer = createExpressApp(getRouter())
         if (clientDevInstance) {
           devServer.use(clientDevInstance)
         }

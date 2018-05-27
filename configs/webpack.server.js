@@ -13,19 +13,30 @@ function localResolve(preset) {
 module.exports = {
   mode: 'production',
   target: 'node',
-  externals: [nodeExternals({
-    whitelist: ['moonglow/lib/src/libs/utils']
-  })],
+  externals: [
+    nodeExternals({
+      whitelist: ['moonglow/lib/src/libs/utils']
+    }),
+  ],
   entry: {
     configs: path.resolve(currentDir, 'moonglow.config.js'),
-    routes: path.resolve(currentDir, 'routes.js')
+    routes: path.resolve(currentDir, 'routes.js'),
+    bootstrap: path.resolve(__dirname, '../lib/src/libs/bootstrap.js')
   },
   output: {
-    path: path.resolve(process.cwd(), 'dist'),
+    path: path.resolve(process.cwd(), '.moonglow/server'),
     publicPath: '/dist/',
     filename: '[name].js',
     library: 'app',
     libraryTarget: 'commonjs2'
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
+    modules: [
+      'node_modules',
+      currentDir,
+      path.resolve(currentDir, '.moonglow/server')
+    ]
   },
   resolveLoader: {
     modules: [
@@ -50,6 +61,11 @@ module.exports = {
             'babel-preset-react'
           ].map(localResolve)
         }
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/
       }
     ]
   },
