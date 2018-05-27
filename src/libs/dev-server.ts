@@ -63,16 +63,17 @@ export default () => {
     const server = http.createServer(devServer)
     server.listen(3000)
 
-    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', _ => {
-      delete require.cache[path.resolve(process.cwd(), '.moonglow/server/bootstrap.js')]
-      delete require.cache[path.resolve(__dirname, 'express-server.ts')]
-      delete require.cache[path.resolve(__dirname, 'react-server.tsx')]
+    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', compilation => {
+      const {assets} = compilation
+
+      Object.keys(assets).forEach(f => delete require.cache[assets[f].existsAt])
       server.removeListener('request', devServer)
       try {
         devServer = createExpressApp(getRouter())
         if (clientDevInstance) {
           devServer.use(clientDevInstance)
         }
+        console.log('Server reloaded')  // tslint:disable-line:no-console
       } catch (e) {
         console.error(e)  // tslint:disable-line:no-console
       } finally {
