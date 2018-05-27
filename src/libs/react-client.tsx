@@ -2,7 +2,8 @@ import 'babel-polyfill'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import {MoonglowRouterProvider, ReactRouterProvider, RouterProvider} from './router'
+import {ReactRouterProvider, RouterProvider} from './react-router'
+import {MoonglowRouterProvider} from './router'
 
 const moonglowRouter = require('routes').router
 
