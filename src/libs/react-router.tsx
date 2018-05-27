@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from 'express'
 import * as path from 'path'
 import * as React from 'react'
 import {InjectedRoute, Omit, withRoute} from 'react-router5'
-import createRouter, {Route, Router} from 'router5/create-router'
+import createRouter, {Route, Router, State} from 'router5/create-router'
 import browserPlugin from 'router5/plugins/browser'
 import listenersPlugin from 'router5/plugins/listeners'
 
@@ -12,18 +12,27 @@ import {HttpMethod, UniversalRouterProvider} from './router'
 export {Link, routeNode, RouterProvider, withRoute} from 'react-router5'
 export {browserPlugin, createRouter, listenersPlugin}
 
+export interface DataHandlers {
+  [name: string]: (route: State) => Promise<any>
+}
+
 export class ReactRouterProvider implements UniversalRouterProvider {
   routes: Route[]
   entryComponent: React.ComponentClass
+  dataHandlers: DataHandlers
 
   constructor(entryComponent: React.ComponentClass) {
     this.routes = []
+    this.dataHandlers = {}
     this.entryComponent = entryComponent
   }
 
-  route(name: string, path: string): Route {
+  route(name: string, path: string, getInitialData?: (route: State) => Promise<any>): Route {
     const route = {name, path}
     this.routes.push(route)
+    if (getInitialData) {
+      this.dataHandlers[name] = getInitialData
+    }
     return route
   }
 
@@ -31,6 +40,15 @@ export class ReactRouterProvider implements UniversalRouterProvider {
     return createRouter(this.routes)
       .usePlugin(browserPlugin({useHash: false}))
       .usePlugin(listenersPlugin())
+      .useMiddleware((_router: Router) => (toState: State, _fromState: State, done: any) => {
+        if (this.dataHandlers[toState.name]) {
+          return this.dataHandlers[toState.name](toState).then(data => {
+            return {...data, ...toState}
+          })
+        } else {
+          done()
+        }
+      })
   }
 
   getExpressMiddlewares() {
