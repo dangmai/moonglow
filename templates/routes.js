@@ -1,4 +1,5 @@
-import {ExpressRouterProvider, HttpMethod, MoonglowRouter, ReactRouterProvider} from 'moonglow/lib/src/libs/router';
+import {ReactRouterProvider} from 'moonglow/lib/src/libs/react-router';
+import {ExpressRouterProvider, HttpMethod, MoonglowRouter} from 'moonglow/lib/src/libs/router';
 import App from './pages/app';
 
 const router = new MoonglowRouter();
@@ -7,11 +8,10 @@ const expressProvider = new ExpressRouterProvider();
 router.use(reactProvider);
 router.use(expressProvider);
 
-class Routes {
-  static home = reactProvider.route('home', '/');
-  static about = reactProvider.route('about', '/about');
-  static server = expressProvider.route(HttpMethod.ALL, '/server', (req, res, next) => { res.send('Hi') });
+const routes = {
+  home: reactProvider.route('home', '/'),
+  about: reactProvider.route('about', '/about'),
+  server: expressProvider.route(HttpMethod.ALL, '/server', (req, res, next) => { res.send('Hi') })
 }
 
-export default Routes;
-export {router};
+export {router, routes};

@@ -1,4 +1,4 @@
-import {Link, routeNode, withRoute} from 'moonglow/lib/src/libs/router';
+import {Link, routeNode, withRoute} from 'moonglow/lib/src/libs/react-router';
 import React from 'react';
 
 function About(props) {
