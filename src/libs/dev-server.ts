@@ -48,6 +48,7 @@ export default () => {
         if (!clientConfig.entry) {
           clientConfig.entry = {}
         }
+        clientConfig.entry['webpack-hot-middleware'] = 'webpack-hot-middleware/client'
         const entry = (<ClientRouterProvider> provider).getClientEntry()  // tslint:disable-line:no-angle-bracket-type-assertion
         clientConfig.entry[entry.name] = entry.path
       }
@@ -59,27 +60,28 @@ export default () => {
         logLevel: 'warn'
       })
       devServer.use(clientDevInstance)
+      devServer.use(require('webpack-hot-middleware')(clientCompiler))
     }
     const server = http.createServer(devServer)
     server.listen(3000)
 
-    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', compilation => {
-      const {assets} = compilation
-
-      Object.keys(assets).forEach(f => delete require.cache[assets[f].existsAt])
-      server.removeListener('request', devServer)
-      try {
-        devServer = createExpressApp(getRouter())
-        if (clientDevInstance) {
-          devServer.use(clientDevInstance)
-        }
-        console.log('Server reloaded')  // tslint:disable-line:no-console
-      } catch (e) {
-        console.error(e)  // tslint:disable-line:no-console
-      } finally {
-        server.on('request', devServer)
-      }
-    })
+    // serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', compilation => {
+    //   const {assets} = compilation
+    //
+    //   Object.keys(assets).forEach(f => delete require.cache[assets[f].existsAt])
+    //   server.removeListener('request', devServer)
+    //   try {
+    //     devServer = createExpressApp(getRouter())
+    //     if (clientDevInstance) {
+    //       devServer.use(clientDevInstance)
+    //     }
+    //     console.log('Server reloaded')  // tslint:disable-line:no-console
+    //   } catch (e) {
+    //     console.error(e)  // tslint:disable-line:no-console
+    //   } finally {
+    //     server.on('request', devServer)
+    //   }
+    // })
 
     console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
   })

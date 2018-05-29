@@ -15,7 +15,10 @@ module.exports = {
   target: 'node',
   externals: [
     nodeExternals({
-      whitelist: ['moonglow/lib/src/libs/utils']
+      whitelist: [
+        'moonglow/lib/src/libs/utils',
+        'react-hot-loader'
+      ]
     }),
   ],
   entry: {

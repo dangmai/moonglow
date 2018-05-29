@@ -6,7 +6,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/assets'
+    publicPath: '/assets/'
   },
   resolveLoader: {
     modules: [
@@ -18,18 +18,22 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
     modules: [
       'node_modules',
-      process.cwd()
+      process.cwd(),
+      path.resolve(__dirname, '../node_modules')
     ]
   },
   module: {
     rules: [
       {
         test: /\.jsx?$/,
-        loader: 'babel-loader',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: ['react-hot-loader/babel'].map(require.resolve),
+            presets: ['babel-preset-env', 'babel-preset-stage-2', 'babel-preset-react'].map(require.resolve)
+          },
+        },
         exclude: /node_modules/,
-        query: {
-          presets: ['babel-preset-env', 'babel-preset-stage-2', 'babel-preset-react'].map(require.resolve)
-        }
       },
       {
         test: /\.tsx?$/,
@@ -42,6 +46,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       MOONGLOW_SERVER_MODE: JSON.stringify(false)
-    })
+    }),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ]
 };
