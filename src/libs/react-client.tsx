@@ -22,7 +22,9 @@ router.start(window.initialState, (err: any, _: any) => {
   if (err) {
     console.error(err)  // tslint:disable-line:no-console
   } else {
-    const app = React.createElement(RouterProvider, {router}, React.createElement(reactProvider.entryComponent))
-    ReactDOM.hydrate(app, document.getElementById('app'))
+    const App = () => (
+      <RouterProvider router={router}><reactProvider.entryComponent /></RouterProvider>
+    )
+    ReactDOM.hydrate(<App />, document.getElementById('app'))
   }
 })

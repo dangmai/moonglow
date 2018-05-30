@@ -48,9 +48,8 @@ export default () => {
         if (!clientConfig.entry) {
           clientConfig.entry = {}
         }
-        clientConfig.entry['webpack-hot-middleware'] = 'webpack-hot-middleware/client'
         const entry = (<ClientRouterProvider> provider).getClientEntry()  // tslint:disable-line:no-angle-bracket-type-assertion
-        clientConfig.entry[entry.name] = entry.path
+        clientConfig.entry[entry.name] = [entry.path, 'webpack-hot-middleware/client']
       }
     })
     if (clientConfig.entry) {
