@@ -19,8 +19,6 @@
     "babel-preset-stage-2": "^6.24.1",
     "css-loader": "^0.28.11",
     "express": "^4.16.3",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
     "react-hot-loader": "^4.2.0",
     "react-router5": "^6.0.1",
     "router5": "^6.2.1",
@@ -51,10 +49,16 @@
     "globby": "^8.0.1",
     "mocha": "^5.1.1",
     "nyc": "^11.7.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "tmp": "0.0.33",
     "ts-node": "^6.0.3",
     "tslint": "^5.6.0",
     "typescript": "^2.8.3"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0"
   },
   "engines": {
     "node": ">=8.0.0"

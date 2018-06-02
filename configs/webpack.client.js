@@ -20,7 +20,10 @@ module.exports = {
       'node_modules',
       process.cwd(),
       path.resolve(__dirname, '../node_modules')
-    ]
+    ],
+    alias: {
+      react: path.resolve(path.join(process.cwd(), './node_modules/react'))
+    }
   },
   module: {
     rules: [
