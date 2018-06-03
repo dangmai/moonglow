@@ -1,8 +1,10 @@
 import {Request, Response} from 'express'
 import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-import {RouterProvider} from 'react-router5'
 import {Router, State} from 'router5/create-router'
+
+import MainApp from './react-app-component'
+import {ComponentHandlers} from './react-router'
 
 const templateFn = (html: string, routerState: State) => `<!DOCTYPE html>
 <html>
@@ -21,9 +23,13 @@ const templateFn = (html: string, routerState: State) => `<!DOCTYPE html>
 </html>
 `
 
-export default (router: Router, appComponent: React.ComponentClass, _: Request, res: Response) => {
-  const app = React.createElement(RouterProvider, {router}, React.createElement(appComponent))
-  const html = ReactDOMServer.renderToString(app)
+export default (router: Router, componentHandlers: ComponentHandlers, _: Request, res: Response) => {
+  const components: React.ComponentClass[] = Object.values(componentHandlers)
+  const html = ReactDOMServer.renderToString(
+    <MainApp router={router}>
+      {components.map((handler: React.ComponentClass, index) => React.createElement(handler, {key: index}))}
+    </MainApp>
+  )
 
   const response = templateFn(html, router.getState())
 

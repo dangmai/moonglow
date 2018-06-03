@@ -15,21 +15,25 @@ export {browserPlugin, createRouter, listenersPlugin}
 export interface DataHandlers {
   [name: string]: (route: State) => Promise<any>
 }
+export interface ComponentHandlers {
+  [name: string]: React.ComponentClass
+}
 
 export class ReactRouterProvider implements UniversalRouterProvider {
   routes: Route[]
-  entryComponent: React.ComponentClass
   dataHandlers: DataHandlers
+  componentHandlers: ComponentHandlers
 
-  constructor(entryComponent: React.ComponentClass) {
+  constructor() {
     this.routes = []
     this.dataHandlers = {}
-    this.entryComponent = entryComponent
+    this.componentHandlers = {}
   }
 
-  route(name: string, path: string, getInitialData?: (route: State) => Promise<any>): Route {
+  route(name: string, path: string, component: React.ComponentClass, getInitialData?: (route: State) => Promise<any>): Route {
     const route = {name, path}
     this.routes.push(route)
+    this.componentHandlers[name] = component
     if (getInitialData) {
       this.dataHandlers[name] = getInitialData
     }
@@ -58,7 +62,7 @@ export class ReactRouterProvider implements UniversalRouterProvider {
         if (error) {
           next()
         } else {
-          renderReact(reactRouter, this.entryComponent, req, res)
+          renderReact(reactRouter, this.componentHandlers, req, res)
         }
       })
     }
