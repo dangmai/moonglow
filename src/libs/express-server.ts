@@ -1,8 +1,7 @@
 import * as express from 'express'
 import {HttpMethod, MoonglowRouter, ServerRouterProvider} from './router'
 
-export default (router: MoonglowRouter): express.Express => {
-  const app = express()
+export default (app: express.Express, router: MoonglowRouter): express.Express => {
   router.providers.forEach(provider => {
     if ((<ServerRouterProvider> provider).getExpressMiddlewares) {  // tslint:disable-line:no-angle-bracket-type-assertion
       const middlewares = (<ServerRouterProvider> provider).getExpressMiddlewares()  // tslint:disable-line:no-angle-bracket-type-assertion

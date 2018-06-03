@@ -2,14 +2,15 @@ import {NextHandleFunction} from 'connect'
 import * as express from 'express'
 import * as http from 'http'
 import * as path from 'path'
+import * as request from 'request'
 import * as webpack from 'webpack'
 import * as webpackDevMiddleware from 'webpack-dev-middleware'
 
 import {ClientRouterProvider, MoonglowRouter, MoonglowRouterProvider} from './router'
 
-function createExpressApp(router: MoonglowRouter) {
+function attachServerRoutes(app: express.Express, router: MoonglowRouter) {
   const expressServer = require('./express-server').default
-  return expressServer(router)
+  return expressServer(app, router)
 }
 
 function getRouter(): MoonglowRouter {
@@ -36,8 +37,13 @@ export default () => {
     writeToDisk: true
   })
   serverDevInstance.waitUntilValid(() => {
+    // We need to keep track of when to reload the server for "hot reloading" of Express routes.
+    // The biggest issue with eager reloads is that Webpack Hot Middleware connection with the browser also breaks.
+    // We will work around this by making WHM middleware and client bundle middleware the first ones to run,
+    // and only reload the server if the request is not handled by them.
+    let serverReloadNeeded = false
     const router = getRouter()
-    devServer = createExpressApp(router)
+    devServer = express()
 
     let clientDevInstance: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
     const clientConfig = require('../../configs/webpack.client.js')
@@ -58,29 +64,43 @@ export default () => {
         publicPath: clientConfig.output.publicPath,
         logLevel: 'warn'
       })
+      const webpackHotMiddleware = require('webpack-hot-middleware')(clientCompiler)
+      devServer.use(webpackHotMiddleware)
       devServer.use(clientDevInstance)
-      devServer.use(require('webpack-hot-middleware')(clientCompiler))
+      const reloadCheck = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        if (serverReloadNeeded) {
+          const newServer = express()
+          newServer.use(webpackHotMiddleware)
+          newServer.use(clientDevInstance)
+          newServer.use(reloadCheck)
+          attachServerRoutes(newServer, getRouter())
+
+          server.removeListener('request', devServer)
+          devServer = newServer
+          server.on('request', devServer)
+          serverReloadNeeded = false
+          console.log('Server reloaded')  // tslint:disable-line:no-console
+
+          const url = req.protocol + '://' + req.get('Host') + req.originalUrl
+          console.log(`Proxying old request to new server at ${url}`)  // tslint:disable-line:no-console
+          req.pipe(request(url)).pipe(res)
+        } else {
+          next()
+        }
+      }
+      devServer.use(reloadCheck)
     }
+    attachServerRoutes(devServer, router)
     const server = http.createServer(devServer)
     server.listen(3000)
 
-    // serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', compilation => {
-    //   const {assets} = compilation
-    //
-    //   Object.keys(assets).forEach(f => delete require.cache[assets[f].existsAt])
-    //   server.removeListener('request', devServer)
-    //   try {
-    //     devServer = createExpressApp(getRouter())
-    //     if (clientDevInstance) {
-    //       devServer.use(clientDevInstance)
-    //     }
-    //     console.log('Server reloaded')  // tslint:disable-line:no-console
-    //   } catch (e) {
-    //     console.error(e)  // tslint:disable-line:no-console
-    //   } finally {
-    //     server.on('request', devServer)
-    //   }
-    // })
+    serverCompiler.hooks.afterEmit.tap('ServerRecompilationPlugin', compilation => {
+      const {assets} = compilation
+
+      Object.keys(assets).forEach(f => delete require.cache[assets[f].existsAt])
+      console.log('Server needs to be reloaded')  // tslint:disable-line:no-console
+      serverReloadNeeded = true
+    })
 
     console.log('Server listening on port 3000!')  // tslint:disable-line:no-console
   })
