@@ -1,4 +1,3 @@
-import {hot} from 'react-hot-loader'
 import {RouterProvider} from './react-router'
 
 import * as React from 'react'
@@ -13,4 +12,4 @@ const MainApp = (props: RoutedAppProps) => (
   <RouterProvider router={props.router}><div>{props.children}</div></RouterProvider>
 )
 
-export default hot(module)(MainApp)
+export default MainApp
