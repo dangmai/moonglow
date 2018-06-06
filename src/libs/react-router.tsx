@@ -9,7 +9,7 @@ import listenersPlugin from 'router5/plugins/listeners'
 import renderReact from './react-server'
 import {HttpMethod, UniversalRouterProvider} from './router'
 
-export {Link, routeNode, RouterProvider, withRoute} from 'react-router5'
+export {BaseLink, Link, routeNode, RouterProvider, withRoute} from 'react-router5'
 export {browserPlugin, createRouter, listenersPlugin}
 
 export interface DataHandlers {
