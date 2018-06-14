@@ -40,7 +40,15 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
+        loader: 'awesome-typescript-loader',
+        options: {
+          useBabel: true,
+          babelCore: path.join(__dirname, '../node_modules/babel-core'),
+          babelOptions: {
+            babelrc: false,
+            plugins: ['react-hot-loader/babel'].map(require.resolve)
+          },
+        },
         exclude: /node_modules/
       },
       {

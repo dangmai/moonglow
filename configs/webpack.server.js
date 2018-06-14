@@ -39,7 +39,10 @@ module.exports = {
       'node_modules',
       currentDir,
       path.resolve(currentDir, '.moonglow/server')
-    ]
+    ],
+    alias: {
+      react: path.resolve(path.join(process.cwd(), './node_modules/react'))
+    }
   },
   resolveLoader: {
     modules: [
@@ -67,7 +70,14 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
+        loader: 'awesome-typescript-loader',
+        options: {
+          useBabel: true,
+          babelCore: path.join(__dirname, '../node_modules/babel-core'),
+          babelOptions: {
+            babelrc: false
+          }
+        },
         exclude: /node_modules/
       }
     ]
