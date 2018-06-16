@@ -10,6 +10,7 @@ function localResolve(preset) {
     require.resolve(preset);
 }
 
+
 module.exports = {
   mode: 'production',
   target: 'node',
@@ -39,10 +40,7 @@ module.exports = {
       'node_modules',
       currentDir,
       path.resolve(currentDir, '.moonglow/server')
-    ],
-    alias: {
-      react: path.resolve(path.join(process.cwd(), './node_modules/react'))
-    }
+    ]
   },
   resolveLoader: {
     modules: [
@@ -73,7 +71,7 @@ module.exports = {
         loader: 'awesome-typescript-loader',
         options: {
           useBabel: true,
-          babelCore: path.join(__dirname, '../node_modules/babel-core'),
+          babelCore: path.dirname(localResolve('babel-core')),
           babelOptions: {
             babelrc: false
           }

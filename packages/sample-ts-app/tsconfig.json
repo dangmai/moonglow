@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "module": "commonjs",
+        "jsx": "react",
+        "target": "es2017"
+    },
+    "include": [
+        "./**/*"
+    ]
+}

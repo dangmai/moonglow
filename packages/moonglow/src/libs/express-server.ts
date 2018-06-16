@@ -1,4 +1,5 @@
 import * as express from 'express'
+
 import {HttpMethod, MoonglowRouter, ServerRouterProvider} from './router'
 
 export default (app: express.Express, router: MoonglowRouter): express.Express => {

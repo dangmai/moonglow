@@ -53,8 +53,8 @@ export default class StartProject extends Command {
 
     const templatePageDir = path.resolve(__dirname, '../../templates/pages')
     await copyFileAsync(path.resolve(templatePageDir, 'about.js'), path.resolve(pagesLocation, 'about.js'))
-    await copyFileAsync(path.resolve(templatePageDir, 'home.js'), path.resolve(pagesLocation, 'home.js'))
+    await copyFileAsync(path.resolve(templatePageDir, 'home.tsx'), path.resolve(pagesLocation, 'home.tsx'))
     await copyFileAsync(path.resolve(templatePageDir, 'app.js'), path.resolve(pagesLocation, 'app.js'))
-    await copyFileAsync(path.resolve(templatePageDir, '../routes.js'), path.resolve(pagesLocation, '../routes.js'))
+    await copyFileAsync(path.resolve(templatePageDir, '../routes.ts'), path.resolve(pagesLocation, '../routes.ts'))
   }
 }

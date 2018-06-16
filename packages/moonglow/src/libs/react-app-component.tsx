@@ -1,7 +1,7 @@
-import {RouterProvider} from './react-router'
-
 import * as React from 'react'
 import {Router} from 'router5/create-router'
+
+import {RouterProvider} from './react-router'
 
 export interface RoutedAppProps {
   router: Router

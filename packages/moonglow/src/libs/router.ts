@@ -75,3 +75,5 @@ export class ExpressRouterProvider implements ServerRouterProvider {
     }))
   }
 }
+
+export {Request, Response}

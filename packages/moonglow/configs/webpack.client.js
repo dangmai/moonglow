@@ -21,9 +21,6 @@ module.exports = {
       process.cwd(),
       path.resolve(__dirname, '../node_modules')
     ],
-    alias: {
-      react: path.resolve(path.join(process.cwd(), './node_modules/react'))
-    }
   },
   module: {
     rules: [
@@ -43,7 +40,7 @@ module.exports = {
         loader: 'awesome-typescript-loader',
         options: {
           useBabel: true,
-          babelCore: path.join(__dirname, '../node_modules/babel-core'),
+          babelCore: path.dirname(require.resolve('babel-core')),
           babelOptions: {
             babelrc: false,
             plugins: ['react-hot-loader/babel'].map(require.resolve)

@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-let moonglowRouter = require('routes').router
+let moonglowRouter = require('routes').router  // tslint:disable-line:no-implicit-dependencies
 let reactProvider = moonglowRouter.providers
   .filter((provider: MoonglowRouterProvider) => provider instanceof ReactRouterProvider)[0]
 let router = reactProvider.getRouter()
@@ -42,7 +42,7 @@ if ((module as any).hot) {
     const currentRouterState = router.getState()
     router.stop()
 
-    moonglowRouter = require('routes').router
+    moonglowRouter = require('routes').router  // tslint:disable-line:no-implicit-dependencies
     reactProvider = moonglowRouter.providers
       .filter((provider: MoonglowRouterProvider) => provider instanceof ReactRouterProvider)[0]
     router = reactProvider.getRouter()
