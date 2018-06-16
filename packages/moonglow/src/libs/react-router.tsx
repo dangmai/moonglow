@@ -9,14 +9,16 @@ import listenersPlugin from 'router5/plugins/listeners'
 import renderReact from './react-server'
 import {HttpMethod, UniversalRouterProvider} from './router'
 
-export {BaseLink, Link, routeNode, RouterProvider, withRoute} from 'react-router5'
+export {BaseLink, InjectedRoute, Link, routeNode, RouterProvider, withRoute} from 'react-router5'
 export {browserPlugin, createRouter, listenersPlugin}
+
+export type RoutableComponent<TProps extends Partial<InjectedRoute>> = React.ComponentClass<Omit<TProps, keyof InjectedRoute>>
 
 export interface DataHandlers {
   [name: string]: (route: State) => Promise<any>
 }
 export interface ComponentHandlers {
-  [name: string]: React.ComponentClass
+  [name: string]: RoutableComponent<any>
 }
 
 export class ReactRouterProvider implements UniversalRouterProvider {
@@ -30,7 +32,7 @@ export class ReactRouterProvider implements UniversalRouterProvider {
     this.componentHandlers = {}
   }
 
-  route(name: string, path: string, component: React.ComponentClass, getInitialData?: (route: State) => Promise<any>): Route {
+  route(name: string, path: string, component: RoutableComponent<any>, getInitialData?: (route: State) => Promise<any>): Route {
     const route = {name, path}
     this.routes.push(route)
     this.componentHandlers[name] = component
@@ -81,24 +83,14 @@ export class ReactRouterProvider implements UniversalRouterProvider {
   }
 }
 
-export interface RoutableComponent<TProps extends Partial<InjectedRoute>> extends React.ComponentClass<Omit<TProps, keyof InjectedRoute>> {
-  getInitialProps?(route: Route): Promise<any>
-}
-
-export interface MiddleRouteState {}
-
-export function middleRoute(route: Route, BaseComponent: RoutableComponent<MiddleRouteState>) {
-  return class extends React.Component<InjectedRoute> {
-    constructor(props: InjectedRoute, context: any) {
-      super(props, context)
-
-      this.state = {}
-    }
-
+export function visibleRoute<TProps extends Partial<InjectedRoute>>(
+  routeName: string,
+  BaseComponent: React.ComponentType<TProps>
+) {
+  return class extends React.Component<TProps> {
     render() {
-      if (this.props.route && route.name === this.props.route.name) {
-        const childProps = {...this.props, ...this.state}
-        return React.createElement(BaseComponent, childProps)
+      if (this.props.route && routeName === this.props.route.name) {
+        return React.createElement(BaseComponent, this.props)
       } else {
         return null
       }
@@ -106,6 +98,9 @@ export function middleRoute(route: Route, BaseComponent: RoutableComponent<Middl
   }
 }
 
-export function simpleRoute(route: Route, BaseComponent: RoutableComponent<any>) {
-  return withRoute(middleRoute(route, BaseComponent))
+export function view<TProps extends Partial<InjectedRoute>>(
+  routeName: string,
+  BaseComponent: React.ComponentType<TProps>
+): React.ComponentClass<Omit<TProps, keyof InjectedRoute>> {
+  return withRoute(visibleRoute(routeName, BaseComponent))
 }

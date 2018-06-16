@@ -1,21 +1,15 @@
-import {BaseLink as Link, withRoute} from 'moonglow/lib/src/libs/react-router'
+import {BaseLink as Link, InjectedRoute, view} from 'moonglow/lib/src/libs/react-router'
 import * as React from 'react'
 
-function About(props: any) {
-    const {route} = props
-
-    return (
-        <div>
-            {route.name === 'about' ? (
-                <div>
-                    <p>About Us</p>
-                    <p>
-                        <Link routeName='home'>Home</Link>
-                    </p>
-                </div>
-            ) : null}
-        </div>
-    )
+function About(_props: InjectedRoute) {
+  return (
+    <div>
+      <p>About Us</p>
+      <p>
+        <Link routeName='home'>Home</Link>
+      </p>
+    </div>
+  )
 }
 
-export default withRoute(About)
+export default view('about', About)

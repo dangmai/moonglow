@@ -1,4 +1,4 @@
-import {BaseLink as Link, simpleRoute} from 'moonglow/lib/src/libs/react-router'
+import {BaseLink as Link, view} from 'moonglow/lib/src/libs/react-router'
 import * as React from 'react'
 
 function User(props: any) {
@@ -10,10 +10,9 @@ function User(props: any) {
             <p>
                 <Link routeName='home'>Home</Link>
             </p>
-            <p>{route.user ? route.user.id + ': ' + route.user.name : ''}</p>
+            <p>{route && route.user ? route.user.id + ': ' + route.user.name : ''}</p>
         </div>
     )
 }
 
-// @ts-ignore
-export default simpleRoute({name: 'user', path: ''}, User)
+export default view('user', User)
