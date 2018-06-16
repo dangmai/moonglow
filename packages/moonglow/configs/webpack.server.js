@@ -10,7 +10,6 @@ function localResolve(preset) {
     require.resolve(preset);
 }
 
-
 module.exports = {
   mode: 'production',
   target: 'node',
@@ -23,8 +22,6 @@ module.exports = {
     }),
   ],
   entry: {
-    configs: path.resolve(currentDir, 'moonglow.config.js'),
-    routes: path.resolve(currentDir, 'routes.js'),
     bootstrap: path.resolve(__dirname, '../lib/src/libs/bootstrap.js')
   },
   output: {

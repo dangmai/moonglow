@@ -38,7 +38,7 @@ router.start(window.initialState, (err: any, _: any) => {
 })
 
 if ((module as any).hot) {
-  (module as any).hot.accept('routes.js', () => {
+  (module as any).hot.accept(['routes.ts'], () => {
     const currentRouterState = router.getState()
     router.stop()
 
