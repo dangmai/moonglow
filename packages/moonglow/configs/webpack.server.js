@@ -13,6 +13,9 @@ function localResolve(preset) {
 module.exports = {
   mode: 'production',
   target: 'node',
+  node: {
+    __dirname: false
+  },
   externals: [
     nodeExternals({
       whitelist: [

@@ -8,3 +8,4 @@ node_modules
 .idea
 .moonglow
 packages/moonglow/lib
+packages/sample-ts-app/database.sqlite

@@ -1,11 +1,13 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "module": "commonjs",
-        "jsx": "react",
-        "target": "es2017"
-    },
-    "include": [
-        "./**/*"
-    ]
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "jsx": "react",
+    "target": "es2017",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": [
+    "./**/*"
+  ]
 }

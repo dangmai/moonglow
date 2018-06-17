@@ -9,6 +9,8 @@
     "moonglow": "^0.1.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "reflect-metadata": "^0.1.12",
+    "sqlite3": "^4.0.0",
     "typeorm": "^0.2.7"
   },
   "engines": {

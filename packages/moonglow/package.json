@@ -23,6 +23,7 @@
     "express": "^4.16.3",
     "react-hot-loader": "^4.2.0",
     "react-router5": "^6.0.1",
+    "reflect-metadata": "^0.1.12",
     "request": "^2.87.0",
     "router5": "^6.2.1",
     "style-loader": "^0.21.0",

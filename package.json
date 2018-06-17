@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
+   "bootstrap": "lerna bootstrap --hoist --nohoist=sqlite3",
     "lerna": "lerna"
   },
   "devDependencies": {
