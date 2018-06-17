@@ -61,7 +61,8 @@
   },
   "peerDependencies": {
     "react": "^16.4.0",
-    "react-dom": "^16.4.0"
+    "react-dom": "^16.4.0",
+    "typeorm": "^0.2.7"
   },
   "engines": {
     "node": ">=8.0.0"
